@@ -46,20 +46,21 @@ package body Tree is
       Node_Array : Forest;
             
       --creer un nouveau noeud
-      procedure Creat_Node(P :  Tree ; J : integer) is
-	 New_Node : node;
+      procedure Creat_Node(P : Tree ; J : integer) is
+	 --New_Node : Node;
 	 New_Array : Forest;
       begin
-	 New_Node.Node_Type := Is_Node;
-	 P.all := New_Node;
-	 New_Node.Node_Tag_Ptr.all.Node_Letter := Character'Val(J + 97) ;
-	 New_Node.Node_Tag_Ptr.all.Node_Branch_Array := new_Array;
+	 
+	 P.Node_Type := Is_Node;
+	 --P.all := New_Node;
+	 P.Node_Tag_Ptr.all.Node_Letter := Character'Val(J + 97) ;
+	 P.Node_Tag_Ptr.all.Node_Branch_Array := new_Array;
       end Creat_Node;
       
    begin
       Nb_Array:=Nomber_Letter(Word);
       
-      for J in 1..27 loop
+      for J in 0..26 loop
 	 Put(J);
 	 if (P = null) then
 	    Creat_Node (P,J);
