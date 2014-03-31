@@ -8,7 +8,17 @@ use Ada.Integer_Text_Io;
 
 package body Tree is
    --type Letter_Counter is array (0..25) of Integer;
-   package Tree_List is new Ada.Containers.Doubly_Linked_Lists(Tree); -- Listes d'arbres
+   package Tree_Lists is new Ada.Containers.Doubly_Linked_Lists(Tree); -- Listes d'arbres
+
+   --==========================================================================
+   -- AUXILIAIRE: Retourne le classement d'une lettre dans l'ordre alphabéthique, avec a à 0
+   --==========================================================================
+   function Alphabetical_Rank(Letter : Character) return Integer is
+   begin
+      -- a = 97    z= 122
+      return Character'Pos(Letter) - 97;
+   end Alphabetical_Rank;
+   --==========================================================================
 
    --==========================================================================
    -- creer le premier niveau de l'arbre , le noeud racine
@@ -17,6 +27,7 @@ package body Tree is
       Root : Tree;
    begin
       Root := new Node;
+      -- ici faut que tu "configure" la new node (définisse les valeurs de son record)
       return Root ;
    end;
    --==========================================================================
@@ -28,12 +39,7 @@ package body Tree is
    function Count_Letters (Word : String) return Letter_counter is
       Nb_Array : Letter_Counter;
 
-      -- Retourne le classement d'une lettre dans l'ordre alphabéthique, avec a à 0
-      function Alphabetical_Rank(Letter : Character) return Integer is
-      begin
-	  -- a = 97    z= 122
-	 return Character'Pos(Letter) - 97;
-      end;
+
 
    begin
       Nb_Array := (others => 0);
@@ -117,7 +123,7 @@ package body Tree is
       -- Affiche la liste des mots trouvés
       procedure Display_Leaf_Content(Leaf : Tag_Leaf) is
          Leaf_Word_List : Word_List.List := Leaf.Words;
-
+         Position: Word_List.Cursor;
          procedure Print_Word(Position : in Word_List.Cursor) is
          begin
             Put_Line(Word_List.Element(Position));
@@ -129,20 +135,40 @@ package body Tree is
 
       end;
 
-      Tree_Level_Counter : Natural := 1;
-      Current_Possible_Trees : Array(1..27) of Tree_List.List;
+      -- Parcours l'abre récursivement
+      procedure Recursive_Tree_Browsing(Current_Node : Node ; Letter_Count_Array: Letter_Counter) is
+
+         Buffer_Leaf : Tag_Leaf;
+         Buffer_Node : Tag_Node;
+
+      begin
+         case Current_Node.Node_Type is
+            when Is_Node => -- SI c'est un noeud normal
+
+               Buffer_Node := Current_Node.Node_Tag_Ptr.all --copie de l'étiquette du noeud dans le buffer
+               -- Pour chaque Arbre fisl correspondant au nombre de lettres inférieur ou égal au nombre de lettres demandé
+               for i in 0..Letter_Count_Array(Alphabetical_Rank(Buffer_Node.Node_Letter)) loop
+                  if Buffer_Node.Node_Branch_Array(i) /= null then
+                     Recursive_Tree_Browsing(Buffer_Node.Node_Branch_Array(i).all, Letter_Count_Array); -- On appelle récursivement la fonction
+                  end if;
+               end loop;
+
+            when Is_Leaf => -- Si c'est une feuille
+
+               Buffer_Leaf := Current_Node.Leaf_Tag_Ptr.all; --copie de l'étiquette de la feuille dans le buffer
+               Display_Leaf_Content(Buffer_Leaf); -- on affiche la feuille en question
+
+         end case;
+
+      end Recursive_Tree_Browsing;
+
+
+      Letter_Count_Array : Letter_Counter := Count_Letters(Letters);
 
    begin
+	-- Fonctionne en récursif, à l'aide de la fonction auxiliaire Recursive_Tree_Browsing
 
-      -- Le parcours de l'arbre est effectué de façon itérative, la manière récursivé étant peut-être plus claire mais largement moins optimisée
-      -- L'algorithme est le suivant:
-      -- 	1) On commence avec le noeud racine
-      --	2) On établit une liste des arbres concerné par le choix de lettres actuel
-      --	3) Pour chaque arbre de cette liste, on réitère le processus, dans une nouvelle liste
-      --	4) On effectue ce processus avec une nouvelle liste par étage de l'arbre
-      --	5) Quand on en arrive aux feuilles, on appelle la fonction de lecture de feuille qui va afficher les mots contenus dans celles-ci
-
-
+   	Recursive_Tree_Browsing(Tree, Letter_Count_Array);
 
    end Search_And_Display;
    --==========================================================================
