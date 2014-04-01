@@ -26,12 +26,9 @@ package body Tree is
    function New_Tree return Tree is
       Root : Tree;
    begin
-<<<<<<< Updated upstream
       Root := null; -- new Node;
       -- ici faut que tu "configure" la new node (définisse les valeurs de son record)
-=======
-      Root := new Node;
->>>>>>> Stashed changes
+
       return Root ;
    end;
    --==========================================================================
@@ -194,7 +191,6 @@ package body Tree is
    begin
 	-- Fonctionne en récursif, à l'aide de la fonction auxiliaire Recursive_Tree_Browsing
       
-      null;
       Recursive_Tree_Browsing(Tree, Letter_Count_Array);
 
    end Search_And_Display;
