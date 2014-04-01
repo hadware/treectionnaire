@@ -40,7 +40,7 @@ package body Tree is
    --==========================================================================
    -- retourne le nombre de lettre dans le mot, stocké dans un tableau
    --==========================================================================
-   function Count_Letters (Word : String) return Letter_counter is
+   function Count_Letters (Word : Unbounded_String) return Letter_counter is
       Nb_Array : Letter_Counter;
    begin
       Nb_Array := (others => 0);
@@ -80,7 +80,7 @@ package body Tree is
    --==========================================================================
    -- insere un mot dans l'arbre
    --==========================================================================
-   procedure Insertion (T : in out Tree ; Word : in String ) is
+   procedure Insertion (T : in out Tree ; Word : in Unbounded_String ) is
       Buffer_node : Tree;
       Nb_Array : Letter_Counter;
       Node_Array : Forest;
@@ -98,12 +98,12 @@ package body Tree is
       end Create_Node;
       
       -- cree une nouvelle feuille
-      procedure Create_Leaf (Buffer_Node : in out Tree; New_Word : String) is
+      procedure Create_Leaf (Buffer_Node : in out Tree; New_Word : Unbounded_String) is
       begin
 	 Buffer_node := new Node;
 	 Buffer_node.Node_Type := Is_Leaf; 
 	 Buffer_Node.Leaf_Tag_Ptr := new Tag_Leaf;
-	 Buffer_Node.Leaf_Tag_Ptr.Words := New_Word;
+	 Buffer_Node.Leaf_Tag_Ptr.Words := Add_Word_To_Leaf(Word,Buffer_Node.Leaf_Tag_Ptr );
       end;
       
       --ajout un mot a la liste de la feuille
