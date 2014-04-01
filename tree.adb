@@ -26,7 +26,7 @@ package body Tree is
    function New_Tree return Tree is
       Root : Tree;
    begin
-      Root :=  new Node;
+      Root := null; -- new Node;
       return Root ;
    end;
    --==========================================================================
@@ -87,37 +87,57 @@ package body Tree is
 	 New_Array:= (others => null);
 	 Buffer_node := new Node;
 	 Buffer_node.Node_Type := Is_Node;
-	 Buffer_Node.Node_Tag_Ptr := new Tag_Node;
+	 Buffer_node.Node_Tag_Ptr := new Tag_Node;
 	 Buffer_node.Node_Tag_Ptr.Node_Letter := Character'Val(J + 97) ;
 	 Buffer_node.Node_Tag_Ptr.Node_Branch_Array := new_Array;
       end Create_Node;
 
       -- cree une nouvelle feuille
-      procedure Create_Leaf (Buffer_Node : in out Tree; New_Word : Unbounded_String) is
+      procedure Create_Leaf (Buffer_Node : in out Tree) is
       begin
 	 Buffer_node := new Node;
 	 Buffer_node.Node_Type := Is_Leaf;
-	 Buffer_Node.Leaf_Tag_Ptr := new Tag_Leaf;
-	 Add_Word_To_Leaf(To_Unbounded_String(Word),Buffer_Node.Leaf_Tag_Ptr.all);
+	 Buffer_node.Leaf_Tag_Ptr := new Tag_Leaf;
       end;
 
       --insere recursivement un mot
       procedure Insertion_Rec (Current_Node :  in out Tree; Nb_Array : Letter_Counter; Current_depth : Integer)  is
 	 Node_Next : Tree;
       begin
+	 
+	 if Current_Depth = 1 then 
+	    for I in 0..8 loop
+	       if Current_Node /= null then
+		  Put("__________________");
+	       end if;	  
+	       end loop;
+	 end if;
+	 
 	 if Current_depth < 26 then --parcours de l'arbre
-	   if (Current_Node = null) then
+	    
+	    if Current_Node = null then 
 	      Create_Node (Current_Node, Current_depth);
+	    
+	    else 
+	      Put ("ancien noeud");
 	   end if;
+	   Put(Current_Node.Node_Tag_Ptr.Node_Letter);
+	   
+	   
 	   Node_Next := Select_Forest(Current_node, Current_depth, Nb_Array);
+	   
+	   
 	   Insertion_Rec(Node_Next,Nb_Array ,Current_Depth + 1);
+	   
 	 else --arrivée à une feuille
 	    if Current_Node = null then
-	       Create_Leaf(Node_Next, To_Unbounded_String(Word));
+	       Create_Leaf(Current_Node);
+	       Put("New leaf");
 	    else
 	       Put("ok");
-	       Add_Word_To_Leaf(To_Unbounded_String(Word), Current_Node.Leaf_Tag_Ptr.all);
 	    end if;
+	    New_Line;
+	    Add_Word_To_Leaf(To_Unbounded_String(Word), Current_Node.Leaf_Tag_Ptr.all);
 	 end if;
 
       end Insertion_Rec;
@@ -125,7 +145,7 @@ package body Tree is
    begin
       Nb_Array := Count_Letters(Word);
       Buffer_Node := T;
-      Insertion_Rec(Buffer_Node, Nb_Array, 0);
+      Insertion_Rec(Buffer_Node, Nb_Array,0);
 
    end Insertion;
    --==========================================================================
