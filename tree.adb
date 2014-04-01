@@ -26,12 +26,7 @@ package body Tree is
    function New_Tree return Tree is
       Root : Tree;
    begin
-<<<<<<< Updated upstream
       Root := null; -- new Node;
-      -- ici faut que tu "configure" la new node (définisse les valeurs de son record)
-=======
-      Root := new Node;
->>>>>>> Stashed changes
       return Root ;
    end;
    --==========================================================================
@@ -40,7 +35,7 @@ package body Tree is
    --==========================================================================
    -- retourne le nombre de lettre dans le mot, stocké dans un tableau
    --==========================================================================
-   function Count_Letters (Word : Unbounded_String) return Letter_counter is
+   function Count_Letters (Word : String) return Letter_counter is
       Nb_Array : Letter_Counter;
    begin
       Nb_Array := (others => 0);
@@ -58,7 +53,7 @@ package body Tree is
    function Select_Forest (Buffer_node : Tree ; J : Integer ; Nb_Array : Letter_counter) return Tree is
       Nb_letter : Integer; --nb de lettre de 'J' ds le mot
    begin
-      Nb_Letter := Nb_Array(J); 
+      Nb_Letter := Nb_Array(J);
       return Buffer_node.Node_Tag_Ptr.all.Node_Branch_Array(Nb_letter);
    end Select_forest;
    --==========================================================================
@@ -72,46 +67,46 @@ package body Tree is
       Word_List.Append(Input_Leaf.Words, Word_To_Add);
    end Add_Word_To_Leaf;
    --==========================================================================
-   
-   
+
+
 
    --==========================================================================
-   
+
    --==========================================================================
    -- insere un mot dans l'arbre
    --==========================================================================
-   procedure Insertion (T : in out Tree ; Word : in Unbounded_String ) is
+   procedure Insertion (T : in out Tree ; Word : in String ) is
       Buffer_node : Tree;
       Nb_Array : Letter_Counter;
       Node_Array : Forest;
-      
+
       -- Crée un nouveau noeud
       procedure Create_Node(Buffer_node : in out Tree ; J : integer) is
 	 New_Array : Forest;
       begin
 	 New_Array:= (others => null);
 	 Buffer_node := new Node;
-	 Buffer_node.Node_Type := Is_Node; 
+	 Buffer_node.Node_Type := Is_Node;
 	 Buffer_Node.Node_Tag_Ptr := new Tag_Node;
 	 Buffer_node.Node_Tag_Ptr.Node_Letter := Character'Val(J + 97) ;
 	 Buffer_node.Node_Tag_Ptr.Node_Branch_Array := new_Array;
       end Create_Node;
-      
+
       -- cree une nouvelle feuille
       procedure Create_Leaf (Buffer_Node : in out Tree; New_Word : Unbounded_String) is
       begin
 	 Buffer_node := new Node;
-	 Buffer_node.Node_Type := Is_Leaf; 
+	 Buffer_node.Node_Type := Is_Leaf;
 	 Buffer_Node.Leaf_Tag_Ptr := new Tag_Leaf;
-	 Buffer_Node.Leaf_Tag_Ptr.Words := Add_Word_To_Leaf(Word,Buffer_Node.Leaf_Tag_Ptr );
+	 Add_Word_To_Leaf(To_Unbounded_String(Word),Buffer_Node.Leaf_Tag_Ptr.all);
       end;
-      
+
       --ajout un mot a la liste de la feuille
       procedure Add (Buffer_Node : Tree ; Word : String) is
       begin
 	 null;
       end;
-      
+
       procedure Insertion_Rec (Buffer_Node : in out Tree; Nb_Array : Letter_Counter; J : Integer)  is
       begin
 	 if J < 25 then --parcours de l'arbre
@@ -123,20 +118,20 @@ package body Tree is
 	   end if;
 	   Insertion_Rec(Buffer_Node,Nb_Array ,J+1);
 	 else --arrivée à une feuille
-	    if Buffer_Node = null then 
-	       Create_Leaf(Buffer_Node, Word);
+	    if Buffer_Node = null then
+	       Create_Leaf(Buffer_Node, To_Unbounded_String(Word));
 	    else
-	       Add_Word(Buffer_Node, Word);
+	       Add_Word_To_Leaf(To_Unbounded_String(Word), Buffer_Node.Leaf_Tag_Ptr.all);
 	    end if;
 	 end if;
-       
+
       end Insertion_Rec;
-      
+
    begin
       Nb_Array := Count_Letters(Word);
       Buffer_Node := T;
       Insertion_Rec(Buffer_Node, Nb_Array, 0);
-      
+
    end Insertion;
    --==========================================================================
 
@@ -152,7 +147,7 @@ package body Tree is
          Position: Word_List.Cursor;
          procedure Print_Word(Position : in Word_List.Cursor) is
          begin
-	    Put_line(Word_List.Element(Position));
+	    Put_line("Mot trouvé :" & To_String(Word_List.Element(Position)));
          end;
 
       begin
@@ -169,7 +164,7 @@ package body Tree is
 
       begin
          case Current_Node.Node_Type is
-            when Is_Node => -- SI c'est un noeud normal
+            when Is_Node => -- Si c'est un noeud normal
 
                Buffer_Node := Current_Node.Node_Tag_Ptr.all; --copie de l'étiquette du noeud dans le buffer
                -- Pour chaque Arbre fisl correspondant au nombre de lettres inférieur ou égal au nombre de lettres demandé
@@ -193,9 +188,9 @@ package body Tree is
 
    begin
 	-- Fonctionne en récursif, à l'aide de la fonction auxiliaire Recursive_Tree_Browsing
+
       
-      null;
-      Recursive_Tree_Browsing(Tree, Letter_Count_Array);
+      Recursive_Tree_Browsing(T.all, Letter_Count_Array);
 
    end Search_And_Display;
    --==========================================================================
