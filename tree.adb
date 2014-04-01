@@ -54,7 +54,6 @@ package body Tree is
       Nb_letter : Integer; --nb de lettre de 'J' ds le mot
    begin
       Nb_Letter := Nb_Array(J);
-      
       return Buffer_node.Node_Tag_Ptr.all.Node_Branch_Array(Nb_letter);
    end Select_forest;
    --==========================================================================
@@ -82,7 +81,7 @@ package body Tree is
       Node_Array : Forest;
 
       -- Crée un nouveau noeud
-      procedure Create_Node(Buffer_node : in out Tree ; J : integer) is
+      procedure Create_Node(Buffer_node : in Tree ; J : integer) is
 	 New_Array : Forest;
       begin
 	 New_Array:= (others => null);
@@ -102,26 +101,24 @@ package body Tree is
 	 Add_Word_To_Leaf(To_Unbounded_String(Word),Buffer_Node.Leaf_Tag_Ptr.all);
       end;
 
-      --ajout un mot a la liste de la feuille
-      procedure Add (Buffer_Node : Tree ; Word : String) is
+      --insere recursivement un mot
+      procedure Insertion_Rec (Buffer_Node :  in out Tree; Nb_Array : Letter_Counter; J : Integer)  is
+	 Node_Next : Tree;
       begin
-	 null;
-      end;
-
-      procedure Insertion_Rec (Buffer_Node : in out Tree; Nb_Array : Letter_Counter; J : Integer)  is
-      begin
-	 if J < 25 then --parcours de l'arbre
+	 if J < 26 then --parcours de l'arbre
 	   if (Buffer_Node = null) then
 	      Create_Node (Buffer_Node, J);
-	      Buffer_node := Select_Forest(Buffer_node, J, Nb_Array);
+	      Node_Next := Select_Forest(Buffer_node, J, Nb_Array);
 	   else
-	      Buffer_node := Select_Forest(Buffer_node, J, Nb_Array);
+	      Put("ok2");
+	      Node_Next := Select_Forest(Buffer_node, J, Nb_Array);
 	   end if;
-	   Insertion_Rec(Buffer_Node,Nb_Array ,J+1);
+	   Insertion_Rec(Node_Next,Nb_Array ,J+1);
 	 else --arrivée à une feuille
 	    if Buffer_Node = null then
-	       Create_Leaf(Buffer_Node, To_Unbounded_String(Word));
+	       Create_Leaf(Node_Next, To_Unbounded_String(Word));
 	    else
+	       Put("ok");
 	       Add_Word_To_Leaf(To_Unbounded_String(Word), Buffer_Node.Leaf_Tag_Ptr.all);
 	    end if;
 	 end if;
