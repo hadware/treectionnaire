@@ -38,9 +38,6 @@ package body Tree is
    --==========================================================================
    function Count_Letters (Word : String) return Letter_counter is
       Nb_Array : Letter_Counter;
-
-
-
    begin
       Nb_Array := (others => 0);
       for I in Word'range loop
@@ -57,7 +54,7 @@ package body Tree is
    function Select_Forest (Buffer_node : Tree ; J : Integer ; Nb_Array : Letter_counter) return Tree is
       Nb_letter : Integer; --nb de lettre de 'J' ds le mot
    begin
-      Nb_Letter := Nb_Array( J + 97); Put(Nb_Letter);
+      Nb_Letter := Nb_Array(J); 
       return Buffer_node.Node_Tag_Ptr.all.Node_Branch_Array(Nb_letter);
    end Select_forest;
    --==========================================================================
@@ -90,24 +87,45 @@ package body Tree is
       begin
 	 New_Array:= (others => null);
 	 Buffer_node := new Node;
-	 Buffer_node.Node_Type := Is_Node;
+	 Buffer_node.Node_Type := Is_Node; 
+	 Buffer_Node.Node_Tag_Ptr := new Tag_Node;
 	 Buffer_node.Node_Tag_Ptr.Node_Letter := Character'Val(J + 97) ;
 	 Buffer_node.Node_Tag_Ptr.Node_Branch_Array := new_Array;
       end Create_Node;
       
+      -- cree une nouvelle feuille
+      procedure Create_Leaf (Buffer_Node : in out Tree; New_Word : String) is
+      begin
+	 Buffer_node := new Node;
+	 Buffer_node.Node_Type := Is_Leaf; 
+	 Buffer_Node.Leaf_Tag_Ptr := new Tag_Leaf;
+	 Buffer_Node.Leaf_Tag_Ptr.Words := New_Word;
+      end;
+      
+      --ajout un mot a la liste de la feuille
+      procedure Add (Buffer_Node : Tree ; Word : String) is
+      begin
+	 null;
+      end;
+      
       procedure Insertion_Rec (Buffer_Node : in out Tree; Nb_Array : Letter_Counter; J : Integer)  is
       begin
-	 
-	 while J <= 26 loop -- Parcour les 26 niveau entre a et z 
-	    if (Buffer_Node = null) then
-	       Put("ok");
+	 if J < 25 then --parcours de l'arbre
+	   if (Buffer_Node = null) then
 	      Create_Node (Buffer_Node, J);
 	      Buffer_node := Select_Forest(Buffer_node, J, Nb_Array);
-	      	   else
+	   else
 	      Buffer_node := Select_Forest(Buffer_node, J, Nb_Array);
 	   end if;
 	   Insertion_Rec(Buffer_Node,Nb_Array ,J+1);
-	 end loop;
+	 else --arrivée à une feuille
+	    if Buffer_Node = null then 
+	       Create_Leaf(Buffer_Node, Word);
+	    else
+	       Add_Word(Buffer_Node, Word);
+	    end if;
+	 end if;
+       
       end Insertion_Rec;
       
    begin
@@ -130,8 +148,7 @@ package body Tree is
          Position: Word_List.Cursor;
          procedure Print_Word(Position : in Word_List.Cursor) is
          begin
-	    null;
-            Put_line(Word_List.Element(Position));
+	    Put_line(Word_List.Element(Position));
          end;
 
       begin
@@ -174,7 +191,7 @@ package body Tree is
 	-- Fonctionne en récursif, à l'aide de la fonction auxiliaire Recursive_Tree_Browsing
       
       null;
-   	Recursive_Tree_Browsing(Tree, Letter_Count_Array);
+      Recursive_Tree_Browsing(Tree, Letter_Count_Array);
 
    end Search_And_Display;
    --==========================================================================
