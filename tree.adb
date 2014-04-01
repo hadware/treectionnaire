@@ -27,11 +27,6 @@ package body Tree is
       Root : Tree;
    begin
       Root := null; -- new Node;
-<<<<<<< HEAD
-      -- ici faut que tu "configure" la new node (définisse les valeurs de son record)
-
-=======
->>>>>>> 302479c5120c500eaf693eb0916ae952fb0a166c
       return Root ;
    end;
    --==========================================================================
@@ -59,6 +54,7 @@ package body Tree is
       Nb_letter : Integer; --nb de lettre de 'J' ds le mot
    begin
       Nb_Letter := Nb_Array(J);
+      
       return Buffer_node.Node_Tag_Ptr.all.Node_Branch_Array(Nb_letter);
    end Select_forest;
    --==========================================================================
@@ -163,22 +159,19 @@ package body Tree is
 
       -- Parcours l'abre récursivement
       procedure Recursive_Tree_Browsing(Current_Node : Node ; Letter_Count_Array: Letter_Counter) is
-
          Buffer_Leaf : Tag_Leaf;
          Buffer_Node : Tag_Node;
-
       begin
          case Current_Node.Node_Type is
             when Is_Node => -- Si c'est un noeud normal
-
                Buffer_Node := Current_Node.Node_Tag_Ptr.all; --copie de l'étiquette du noeud dans le buffer
                -- Pour chaque Arbre fisl correspondant au nombre de lettres inférieur ou égal au nombre de lettres demandé
                for i in 0..Letter_Count_Array(Alphabetical_Rank(Buffer_Node.Node_Letter)) loop
                   if Buffer_Node.Node_Branch_Array(i) /= null then
-                     Recursive_Tree_Browsing(Buffer_Node.Node_Branch_Array(i).all, Letter_Count_Array); -- On appelle récursivement la fonction
+		     Recursive_Tree_Browsing(Buffer_Node.Node_Branch_Array(i).all, Letter_Count_Array); -- On appelle récursivement la fonction
                   end if;
                end loop;
-
+	       
             when Is_Leaf => -- Si c'est une feuille
 
                Buffer_Leaf := Current_Node.Leaf_Tag_Ptr.all; --copie de l'étiquette de la feuille dans le buffer
@@ -194,12 +187,8 @@ package body Tree is
    begin
 	-- Fonctionne en récursif, à l'aide de la fonction auxiliaire Recursive_Tree_Browsing
 
-      
-<<<<<<< HEAD
-      Recursive_Tree_Browsing(Tree, Letter_Count_Array);
-=======
       Recursive_Tree_Browsing(T.all, Letter_Count_Array);
->>>>>>> 302479c5120c500eaf693eb0916ae952fb0a166c
+
 
    end Search_And_Display;
    --==========================================================================
