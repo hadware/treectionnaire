@@ -26,7 +26,7 @@ package body Tree is
    function New_Tree return Tree is
       Root : Tree;
    begin
-      Root := null; -- new Node;
+      Root :=  new Node;
       return Root ;
    end;
    --==========================================================================
@@ -54,7 +54,7 @@ package body Tree is
       Nb_letter : Integer; --nb de lettre de 'J' ds le mot
    begin
       Nb_Letter := Nb_Array(J);
-      return Buffer_node.Node_Tag_Ptr.all.Node_Branch_Array(Nb_letter);
+      return Buffer_node.Node_Tag_Ptr.Node_Branch_Array(Nb_letter);
    end Select_forest;
    --==========================================================================
 
@@ -81,7 +81,7 @@ package body Tree is
       Node_Array : Forest;
 
       -- Crée un nouveau noeud
-      procedure Create_Node(Buffer_node : in Tree ; J : integer) is
+      procedure Create_Node(Buffer_node : in out Tree ; J : integer) is
 	 New_Array : Forest;
       begin
 	 New_Array:= (others => null);
@@ -102,24 +102,21 @@ package body Tree is
       end;
 
       --insere recursivement un mot
-      procedure Insertion_Rec (Buffer_Node :  in out Tree; Nb_Array : Letter_Counter; J : Integer)  is
+      procedure Insertion_Rec (Current_Node :  in out Tree; Nb_Array : Letter_Counter; Current_depth : Integer)  is
 	 Node_Next : Tree;
       begin
-	 if J < 26 then --parcours de l'arbre
-	   if (Buffer_Node = null) then
-	      Create_Node (Buffer_Node, J);
-	      Node_Next := Select_Forest(Buffer_node, J, Nb_Array);
-	   else
-	      Put("ok2");
-	      Node_Next := Select_Forest(Buffer_node, J, Nb_Array);
+	 if Current_depth < 26 then --parcours de l'arbre
+	   if (Current_Node = null) then
+	      Create_Node (Current_Node, Current_depth);
 	   end if;
-	   Insertion_Rec(Node_Next,Nb_Array ,J+1);
+	   Node_Next := Select_Forest(Current_node, Current_depth, Nb_Array);
+	   Insertion_Rec(Node_Next,Nb_Array ,Current_Depth + 1);
 	 else --arrivée à une feuille
-	    if Buffer_Node = null then
+	    if Current_Node = null then
 	       Create_Leaf(Node_Next, To_Unbounded_String(Word));
 	    else
 	       Put("ok");
-	       Add_Word_To_Leaf(To_Unbounded_String(Word), Buffer_Node.Leaf_Tag_Ptr.all);
+	       Add_Word_To_Leaf(To_Unbounded_String(Word), Current_Node.Leaf_Tag_Ptr.all);
 	    end if;
 	 end if;
 
