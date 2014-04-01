@@ -9,6 +9,55 @@ use Ada.Integer_Text_Io;
 package body Tree is
    --type Letter_Counter is array (0..25) of Integer;
    package Tree_Lists is new Ada.Containers.Doubly_Linked_Lists(Tree); -- Listes d'arbres
+   
+   --==========================================================================
+   -- AUXILIARE : Affiche la liste des mots trouvés dans une feuille
+   --==========================================================================
+   procedure Display_Leaf_Content(Leaf : Tag_Leaf) is
+      Leaf_Word_List : Word_List.List := Leaf.Words;
+      Position: Word_List.Cursor;
+      procedure Print_Word(Position : in Word_List.Cursor) is
+      begin
+	 Put_line("Mot trouvé :" & To_String(Word_List.Element(Position)));
+      end;
+      
+   begin
+      Put_Line("Affichage du contenu d'une feuille ");
+      -- Parcour de la liste avec la fonction d'itération des listes
+        Leaf_Word_List.Iterate(Print_Word'Access);
+	
+   end Display_Leaf_Content;
+   --==========================================================================
+   
+    --==========================================================================
+   -- AUXILIAIRE: Affiche les données d'un noeud
+   --==========================================================================
+   procedure Display_Node(Node_To_Display : Node) is
+      procedure Print_Forest_Table( Forest_To_Print : Forest) is
+      begin
+	 
+	 Put("|");
+	 for I in 0..8 loop
+	    if Forest_To_Print(I) = null then
+	       Put("0|");
+	    else
+	       Put("X");
+	    end if;
+	 end loop;
+	 Put_Line("");
+      end;
+      
+   begin
+      case Node_To_Display.Node_Type is
+	 when Is_Node =>
+	    Put_Line("Noeud pour la lettre " & Node_To_Display.Node_Tag_Ptr.Node_Letter );
+	    Put_Line("Tableau des pointeurs vers les noeuds inférieurs:");
+	    Print_Forest_Table(Node_To_Display.Node_Tag_Ptr.Node_Branch_Array);
+	 when Is_Leaf =>
+	    Display_Leaf_Content(Node_To_Display.Leaf_Tag_Ptr.all);
+      end case;
+   end Display_Node;
+   --==========================================================================
 
    --==========================================================================
    -- AUXILIAIRE: Retourne le classement d'une lettre dans l'ordre alphabéthique, avec a à 0
@@ -64,6 +113,7 @@ package body Tree is
    --==========================================================================
    procedure Add_Word_To_Leaf(Word_To_Add : in Unbounded_String; Input_Leaf: in out Tag_Leaf) is
    begin
+      Put_Line("Stocké mot " & To_String(Word_To_Add));
       Word_List.Append(Input_Leaf.Words, Word_To_Add);
    end Add_Word_To_Leaf;
    --==========================================================================
@@ -117,24 +167,19 @@ package body Tree is
 	    
 	    if Current_Node = null then 
 	      Create_Node (Current_Node, Current_depth);
-	    
-	    else 
-	      Put ("ancien noeud");
-	   end if;
-	   Put(Current_Node.Node_Tag_Ptr.Node_Letter);
+	    end if;
+	   -- Put(Current_Node.Node_Tag_Ptr.Node_Letter);
 	   
-	   
+	   -- On passe au noeud suivant, en utilisant la table des Nombre de Lettre pour choisir quel noeud
 	   Node_Next := Select_Forest(Current_node, Current_depth, Nb_Array);
-	   
-	   
 	   Insertion_Rec(Node_Next,Nb_Array ,Current_Depth + 1);
 	   
 	 else --arrivée à une feuille
 	    if Current_Node = null then
 	       Create_Leaf(Current_Node);
-	       Put("New leaf");
-	    else
-	       Put("ok");
+	       -- Put("New leaf");
+	    --else
+	       -- Put("ok");
 	    end if;
 	    New_Line;
 	    Add_Word_To_Leaf(To_Unbounded_String(Word), Current_Node.Leaf_Tag_Ptr.all);
@@ -146,30 +191,19 @@ package body Tree is
       Nb_Array := Count_Letters(Word);
       Buffer_Node := T;
       Insertion_Rec(Buffer_Node, Nb_Array,0);
+      T := Buffer_Node;
 
    end Insertion;
    --==========================================================================
-
+   
+   
 
    --==========================================================================
    -- recherche les mots
    --==========================================================================
    procedure Search_And_Display (T : in Tree ; Letters : in String) is
 
-      -- Affiche la liste des mots trouvés
-      procedure Display_Leaf_Content(Leaf : Tag_Leaf) is
-         Leaf_Word_List : Word_List.List := Leaf.Words;
-         Position: Word_List.Cursor;
-         procedure Print_Word(Position : in Word_List.Cursor) is
-         begin
-	    Put_line("Mot trouvé :" & To_String(Word_List.Element(Position)));
-         end;
-
-      begin
-         -- Parcour de la liste avec la fonction d'itération des listes
-        Leaf_Word_List.Iterate(Print_Word'Access);
-
-      end;
+      
 
       -- Parcours l'abre récursivement
       procedure Recursive_Tree_Browsing(Current_Node : Node ; Letter_Count_Array: Letter_Counter) is
@@ -178,6 +212,7 @@ package body Tree is
       begin
          case Current_Node.Node_Type is
             when Is_Node => -- Si c'est un noeud normal
+	       Display_Node(Current_Node); --affichage du noeud
                Buffer_Node := Current_Node.Node_Tag_Ptr.all; --copie de l'étiquette du noeud dans le buffer
                -- Pour chaque Arbre fisl correspondant au nombre de lettres inférieur ou égal au nombre de lettres demandé
                for i in 0..Letter_Count_Array(Alphabetical_Rank(Buffer_Node.Node_Letter)) loop
@@ -200,11 +235,11 @@ package body Tree is
 
    begin
 	-- Fonctionne en récursif, à l'aide de la fonction auxiliaire Recursive_Tree_Browsing
-
+      
       Recursive_Tree_Browsing(T.all, Letter_Count_Array);
 
 
    end Search_And_Display;
-   --==========================================================================
+      --==========================================================================
 
 end ;
