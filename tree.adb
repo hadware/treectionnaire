@@ -26,8 +26,12 @@ package body Tree is
    function New_Tree return Tree is
       Root : Tree;
    begin
+<<<<<<< Updated upstream
       Root := null; -- new Node;
       -- ici faut que tu "configure" la new node (définisse les valeurs de son record)
+=======
+      Root := new Node;
+>>>>>>> Stashed changes
       return Root ;
    end;
    --==========================================================================
