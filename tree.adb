@@ -87,12 +87,16 @@ package body Tree is
    -- retourne le nombre de lettre dans le mot, stocké dans un tableau
    --==========================================================================
    function Count_Letters (Word : String) return Letter_counter is
-      Nb_Array : Letter_Counter;
+      Nb_Array : Letter_Counter := (others => 0);
       Lowercase_Word: String := To_Lower(Word);
    begin
       Nb_Array := (others => 0);
       for I in Lowercase_Word'range loop
+	 if Nb_Array(Alphabetical_Rank(Lowercase_Word(I))) = 8 then
+	    null;
+	 else
 	 Nb_Array (Alphabetical_Rank(Lowercase_Word(I))) := Nb_Array (Alphabetical_Rank(Lowercase_Word(I))) + 1;
+	 end if; 
       end loop;
       return Nb_Array;
    end Count_Letters;
