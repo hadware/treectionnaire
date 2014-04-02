@@ -28,12 +28,15 @@ package Tree is
       --Contient une double liste des mots contenus par la feuille
       Words : Word_List.List;
    end record;
-
+   
+   type Stem is access Tag_Leaf;
+   
    type Node is record
       Node_Type: Node_Nature; --défini si le noeud est un noeud standard ou une feuille
       Node_Tag_Ptr : access Tag_Node; --utilisé si le noeud est standard
-      Leaf_Tag_Ptr: access Tag_Leaf; --utilisé si le noeud est une feuille
+      Leaf_Tag_Ptr: Stem ; --utilisé si le noeud est une feuille
    end record;
    type Tree is access Node;
-
+   
+   
 end Tree;

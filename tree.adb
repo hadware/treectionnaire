@@ -3,6 +3,9 @@ use Ada.Text_IO;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
 
+-- Pour Mettre en minuscule
+with Ada.Characters.Handling; use Ada.Characters.Handling;
+
 with Ada.Integer_Text_Io;
 use Ada.Integer_Text_Io;
 
@@ -22,7 +25,6 @@ package body Tree is
       end;
       
    begin
-      Put_Line("Affichage du contenu d'une feuille ");
       -- Parcour de la liste avec la fonction d'itération des listes
         Leaf_Word_List.Iterate(Print_Word'Access);
 	
@@ -41,7 +43,7 @@ package body Tree is
 	    if Forest_To_Print(I) = null then
 	       Put("0|");
 	    else
-	       Put("X");
+	       Put("X|");
 	    end if;
 	 end loop;
 	 Put_Line("");
@@ -86,10 +88,11 @@ package body Tree is
    --==========================================================================
    function Count_Letters (Word : String) return Letter_counter is
       Nb_Array : Letter_Counter;
+      Lowercase_Word: String := To_Lower(Word);
    begin
       Nb_Array := (others => 0);
-      for I in Word'range loop
-	 Nb_Array (Alphabetical_Rank(Word(I))) := Nb_Array (Alphabetical_Rank(Word(I))) + 1;
+      for I in Lowercase_Word'range loop
+	 Nb_Array (Alphabetical_Rank(Lowercase_Word(I))) := Nb_Array (Alphabetical_Rank(Lowercase_Word(I))) + 1;
       end loop;
       return Nb_Array;
    end Count_Letters;
@@ -111,7 +114,7 @@ package body Tree is
    --==========================================================================
    -- Ajoute un mot à la feuille passée en argument
    --==========================================================================
-   procedure Add_Word_To_Leaf(Word_To_Add : in Unbounded_String; Input_Leaf: in out Tag_Leaf) is
+   procedure Add_Word_To_Leaf(Word_To_Add : in Unbounded_String; Input_Leaf: in out Stem) is
    begin
       Put_Line("Stocké mot " & To_String(Word_To_Add));
       Word_List.Append(Input_Leaf.Words, Word_To_Add);
@@ -162,8 +165,7 @@ package body Tree is
 	    if Current_Node = null then 
 	      Create_Node (Current_Node, Current_depth);
 	    end if;
-	   -- Put(Current_Node.Node_Tag_Ptr.Node_Letter);
-	   
+	   	   
 	   -- On passe au noeud suivant, en utilisant la table des Nombre de Lettre pour choisir quel noeud
 	    
 	    Insertion_Rec(Current_Node.Node_Tag_Ptr.Node_Branch_Array(Nb_letter),Nb_Array ,Current_Depth + 1);
@@ -177,7 +179,7 @@ package body Tree is
 	       -- Put("ok");
 	    end if;
 	    New_Line;
-	    Add_Word_To_Leaf(To_Unbounded_String(Word), Current_Node.Leaf_Tag_Ptr.all);
+	    Add_Word_To_Leaf(To_Unbounded_String(Word), Current_Node.Leaf_Tag_Ptr);
 	 end if;
 
       end Insertion_Rec;
@@ -207,7 +209,7 @@ package body Tree is
       begin
          case Current_Node.Node_Type is
             when Is_Node => -- Si c'est un noeud normal
-	       Display_Node(Current_Node); --affichage du noeud
+	       -- Display_Node(Current_Node); --affichage du noeud
                Buffer_Node := Current_Node.Node_Tag_Ptr.all; --copie de l'étiquette du noeud dans le buffer
                -- Pour chaque Arbre fisl correspondant au nombre de lettres inférieur ou égal au nombre de lettres demandé
                for i in 0..Letter_Count_Array(Alphabetical_Rank(Buffer_Node.Node_Letter)) loop
