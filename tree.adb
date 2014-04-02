@@ -153,15 +153,8 @@ package body Tree is
       --insere recursivement un mot
       procedure Insertion_Rec (Current_Node :  in out Tree; Nb_Array : Letter_Counter; Current_depth : Integer)  is
 	 Node_Next : Tree;
+	 Nb_Letter : Integer;
       begin
-	 
-	 if Current_Depth = 1 then 
-	    for I in 0..8 loop
-	       if Current_Node /= null then
-		  Put("__________________");
-	       end if;	  
-	       end loop;
-	 end if;
 	 
 	 if Current_depth < 26 then --parcours de l'arbre
 	    
@@ -171,8 +164,9 @@ package body Tree is
 	   -- Put(Current_Node.Node_Tag_Ptr.Node_Letter);
 	   
 	   -- On passe au noeud suivant, en utilisant la table des Nombre de Lettre pour choisir quel noeud
-	   Node_Next := Select_Forest(Current_node, Current_depth, Nb_Array);
-	   Insertion_Rec(Node_Next,Nb_Array ,Current_Depth + 1);
+	    Nb_Letter := Nb_Array(Current_Depth);
+	    Node_Next := Current_Node.Node_Tag_Ptr.Node_Branch_Array(Nb_letter);
+	    Insertion_Rec(Node_Next,Nb_Array ,Current_Depth + 1);
 	   
 	 else --arrivée à une feuille
 	    if Current_Node = null then
