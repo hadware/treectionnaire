@@ -45,7 +45,7 @@ begin
    end if;
    
    declare
-      Word : String(1..Word_Number);
+      Word : String(1..Word_Length);
    begin
       for I in 1..Word_Number loop
 	 for J in 1..Word_Length loop
